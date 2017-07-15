@@ -1,7 +1,7 @@
 {
   "name": "lsystems",
-  "version": "0.0.1",
-  "description": "",
+  "version": "1.0.0",
+  "description": "A minimal L-Systems parser and visualizer that runs on your browser.",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
@@ -9,6 +9,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Hernán Rodríguez Colmeiro <me@peregrinogris.com.ar> (http://peregrinogris.com.ar)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peregrinogris/lsystems-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/peregrinogris/lsystems-js/issues"
+  },
+  "homepage": "https://github.com/peregrinogris/lsystems-js#readme",
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.25.0",
