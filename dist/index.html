@@ -1,7 +1,6 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/base-min.css">
     <style>
       body {
         margin: 50px;
@@ -19,8 +18,63 @@
     </style>
   </head>
   <body>
-    <h1>Tortuga live examples</h1>
-    <canvas width="500" height="500" id="tortuga-poly-figure"></canvas>
+    <h1>L-Systems</h1>
+    <h2>Tree</h2>
+    <pre>
+      variables : X, F
+      constants : +-[]
+      axiom     : X
+      rules     : (X → F-[[X]+X]+F[+FX]-X)
+                  (F → FF)
+      angle     : 22.5°
+    </pre>
+    <canvas width="500" height="500" id="tortuga-tree"></canvas>
+
+    <h2>Hex Gosper Curve</h2>
+    <pre>
+      variables : A, B
+      constants : +-
+      axiom     : A
+      rules     : (A → A+B++B-A--AA-B+)
+                  (B → -A+BB++B+A--A-B)
+      angle     : 60°
+    </pre>
+    <canvas width="500" height="500" id="tortuga-hex-gosper"></canvas>
+
+    <h2>Koch Snowflake</h2>
+    <pre>
+      variables : F
+      constants : +-
+      axiom     : F++F++F
+      rules     : (F → F-F++F-F)
+      angle     : 60°
+    </pre>
+    <canvas width="500" height="500" id="tortuga-snowflake"></canvas>
+
+    <h2>Quadratic Koch Flake</h2>
+    <pre>
+      variables : F
+      constants : +-
+      axiom     : F-F-F-F
+      rules     : (F → F-F+F+FF-F-F+F)
+      angle     : 90°
+    </pre>
+    <canvas width="500" height="500" id="tortuga-quad-koch"></canvas>
+
+    <h1>Parametric L-Systems </h1>
+    <h2>Row of Trees</h2>
+    <pre>
+      #define    c 3
+      #define    p 0.9
+      #define    q c−p
+      #define    h (p∗q)^0.5
+      modules   : F(x)
+      constants : +-()
+      axiom     : -(90)F(1)
+      rules     : (F(x)→F(x∗p)+F(x∗h)−−F(x∗h)+F(x∗q))
+    </pre>
+    <canvas style="max-height: 1000px;" width="1000" height="500" id="tortuga-row-of-trees"></canvas>
+
     <script src="js/app.min.js"></script>
   </body>
 </html>
