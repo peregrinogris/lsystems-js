@@ -1,18 +1,13 @@
 // Helpers
 export const interpret = (ast, visitor) => {
-  // eslint-disable-next-line no-use-before-define
-  const traverseArray = array => array.map(child => traverseNode(child));
-  const traverseNode = (node) => {
+  ast.body.forEach((node) => {
     const method = visitor[node.type];
     switch (node.type) {
-      case 'Program':
-        traverseArray(node.body);
-        break;
       case 'Module':
       case 'Rotation':
       case 'Modifier':
         if (method) {
-          method(node, traverseArray(node.params));
+          method(node, node.params.map(n => n.value));
         }
         break;
       case 'PopState':
@@ -21,36 +16,30 @@ export const interpret = (ast, visitor) => {
           method(node);
         }
         break;
-      case 'NumberLiteral':
-        return node.value;
       default:
         throw new TypeError(node.type);
     }
-    return undefined;
-  };
-  traverseNode(ast);
+  });
 };
 
 export const iterate = (ast, lsystem) => {
-  // eslint-disable-next-line no-use-before-define
-  const traverseArray = array => array.map(child => traverseNode(child));
-  const traverseNode = (node) => {
+  if (!ast.body.length) {
+    return lsystem.axiom;
+  }
+  return ast.body.map((node) => {
     let method = null;
     switch (node.type) {
-      case 'Program':
-        if (!node.body.length) {
-          return lsystem.axiom;
-        }
-        return traverseArray(node.body).join('');
       case 'Module':
+      case 'Rotation':
         method = lsystem.productions[node.name];
         if (method) {
-          return method(traverseArray(node.params));
+          return method(node.params.map(n => n.value));
         }
-      case 'Rotation': // eslint-disable-line no-fallthrough
-      case 'Modifier':
-        // eslint-disable-next-line max-len
-        return `${node.name} ${(node.params.length ? `(${traverseArray(node.params)})` : '')}`;
+      case 'Modifier': // eslint-disable-line no-fallthrough
+        if (node.params.length) {
+          return `${node.name}(${node.params.map(n => n.value).join(',')})`;
+        }
+        return node.name;
       case 'PopState':
       case 'PushState':
       case 'NumberLiteral':
@@ -58,6 +47,5 @@ export const iterate = (ast, lsystem) => {
       default:
         throw new TypeError(node.type);
     }
-  };
-  return traverseNode(ast);
+  }).join('');
 };
