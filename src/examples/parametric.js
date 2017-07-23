@@ -1,5 +1,5 @@
 import Tortuga from 'tortuga-js';
-import LSystem, { createVisitor } from '../lsystems/LSystem';
+import LSystem, { createVisitor } from '../lsystems';
 
 const singleTree = new LSystem({
   productions: {

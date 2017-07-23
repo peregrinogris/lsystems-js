@@ -1,5 +1,5 @@
 import Tortuga from 'tortuga-js';
-import LSystem, { createVisitor } from '../lsystems/LSystem';
+import LSystem, { createVisitor } from '../lsystems';
 
 const renderSystem =
 (system, angle, iterations, target, x, y, length, rainbow) => {
