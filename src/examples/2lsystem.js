@@ -22,7 +22,7 @@ const renderSystem = (system, target, x, y, length) => {
   const angle = 60;
   const turtle = new Tortuga(target, x, y, length);
   const visitor = Object.assign(createVisitor(turtle, length, angle), {
-    Module: function Module(node, params) {
+    Module: (node, params) => {
       if (node.name === 'A') {
         turtle.color('green');
       } else {

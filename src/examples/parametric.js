@@ -3,7 +3,7 @@ import LSystem, { createVisitor } from '../lsystems';
 
 const singleTree = new LSystem({
   productions: {
-    A: function Module(params) {
+    A: (params) => {
       const s = params[0];
       const sR = Math.round(100 * (s / 1.456)) / 100;
       return `F(${s})[+A(${sR})][-A(${sR})]`;
@@ -19,7 +19,7 @@ const rowOfTrees = new LSystem((() => {
   const rotH = (rotP * rotQ) ** 0.5;
   return {
     productions: {
-      F: function Module(params) {
+      F: (params) => {
         const xh = Math.round(100 * params[0] * rotH) / 100;
         const xp = Math.round(100 * params[0] * rotP) / 100;
         const xq = Math.round(100 * params[0] * rotQ) / 100;
