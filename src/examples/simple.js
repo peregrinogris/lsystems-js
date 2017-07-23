@@ -1,103 +1,68 @@
 import Tortuga from 'tortuga-js';
+import LSystem, { createVisitor } from '../lsystems/LSystem';
 
-function renderSystem([path, angle], target, x, y, length, rainbow) {
+const renderSystem =
+(system, angle, iterations, target, x, y, length, rainbow) => {
+  for (let i = 0; i < iterations; i += 1) {
+    system.iterate();
+  }
+
   const turtle = new Tortuga(target, x, y, length);
-  const edges = (path.match(/F/g) || []).length;
-  const stack = [];
-  let currentEdge = 2;
-  let state;
+  const visitor = createVisitor(turtle, length, angle);
 
-  for (let idx = 0; idx < path.length; idx += 1) {
-    switch (path[idx]) {
-      case 'F':
-        turtle.forward(length);
-        if (rainbow) {
-          turtle.rainbow(currentEdge, edges);
-        }
-        currentEdge += 1;
-        break;
-      case '+':
-        turtle.left(angle);
-        break;
-      case '-':
-        turtle.right(angle);
-        break;
-      // State Push
-      case '[':
-        stack.push([turtle.position, turtle.direction]);
-        turtle.drawPath();
-        break;
-      // State Pop
-      case ']':
-        state = stack.pop();
-        turtle.drawPath();
-        turtle.penUp();
-        turtle.setXY(...state[0]);
-        turtle.setHeading(state[1]);
-        turtle.penDown();
-        break;
-      default:
-        break;
-    }
+  if (rainbow) {
+    const edges = system.ast.body.reduce(
+      (acc, cur) => (cur.type === 'Module' ? acc + 1 : acc),
+      0,
+    );
+    let currentEdge = 2;
+    visitor.Module = (node, params) => {
+      turtle.rainbow(currentEdge, edges);
+      currentEdge += 1;
+      // All modules are interpreted as Forward
+      turtle.forward(params.length > 0 ? length * params[0] : length);
+    };
   }
+
+  system.walk(visitor);
   turtle.drawPath();
-}
+};
 
-function quadKoch(iterations) {
-  let w = 'F-F-F-F';
-  const p = [/F/g, 'F-F+F+FF-F-F+F'];
-  // var p = [/F/g, 'FF-F+F-F-FF'];
-  for (let i = 0; i < iterations; i += 1) {
-    w = w.replace(p[0], p[1]);
-  }
-  return [w, 90];
-}
+const tree = new LSystem({
+  productions: {
+    X: () => 'F-[[X]+X]+F[+FX]-X',
+    F: () => 'FF',
+  },
+  axiom: 'X',
+});
 
-function snowflake(iterations) {
-  let w = 'F++F++F';
-  const p = [/F/g, 'F-F++F-F'];
-  for (let i = 0; i < iterations; i += 1) {
-    w = w.replace(p[0], p[1]);
-  }
-  return [w, 60];
-}
+const hexGosperCurve = new LSystem({
+  productions: {
+    A: () => 'A+B++B-A--AA-B+',
+    B: () => '-A+BB++B+A--A-B',
+  },
+  axiom: 'A',
+});
 
-function hexGosperCurve(iterations) {
-  let w = 'A';
-  const pa = [/A/g, 'A+B++B-A--AA-B+'];
-  const pb = [/B/g, '-A+BB++B+A--A-B'];
+const snowflake = new LSystem({
+  productions: {
+    F: () => 'F-F++F-F',
+  },
+  axiom: 'F++F++F',
+});
 
-  for (let i = 0; i < iterations; i += 1) {
-    w = w.replace(pa[0], 'a');
-    w = w.replace(pb[0], 'b');
-    w = w.replace(/a/g, pa[1]);
-    w = w.replace(/b/g, pb[1]);
-  }
-  w = w.replace(/[AB]/g, 'F');
-
-  return [w, 60];
-}
-
-function tree(iterations) {
-  let w = 'X';
-  const pa = [/X/g, 'F-[[X]+X]+F[+FX]-X'];
-  const pb = [/F/g, 'FF'];
-
-  for (let i = 0; i < iterations; i += 1) {
-    w = w.replace(pa[0], 'a');
-    w = w.replace(pb[0], 'b');
-    w = w.replace(/a/g, pa[1]);
-    w = w.replace(/b/g, pb[1]);
-  }
-  w = w.replace(/[X]/g, 'F');
-
-  return [w, 22.5];
-}
+const quadKoch = new LSystem({
+  productions: {
+    F: () => 'F-F+F+FF-F-F+F',
+    // F: () => 'FF-F+F-F-FF',
+  },
+  axiom: 'F-F-F-F',
+});
 
 const render = () => {
-  renderSystem(hexGosperCurve(3), '#tortuga-hex-gosper', 200, 0, 20, true);
-  renderSystem(snowflake(3), '#tortuga-snowflake', 120, -200, 14, true);
-  renderSystem(quadKoch(2), '#tortuga-quad-koch', -100, -100, 15, false);
-  renderSystem(tree(3), '#tortuga-tree', -50, -200, 20, false);
+  renderSystem(tree, 22.5, 3, '#tortuga-tree', -50, -200, 20, false);
+  renderSystem(hexGosperCurve, 60, 3, '#tortuga-hex-gosper', 200, 0, 20, true);
+  renderSystem(snowflake, 60, 3, '#tortuga-snowflake', 120, -200, 14, true);
+  renderSystem(quadKoch, 90, 2, '#tortuga-quad-koch', -100, -100, 15, false);
 };
 export default render;

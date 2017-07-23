@@ -1,7 +1,7 @@
 import Tortuga from 'tortuga-js';
-import { parse, interpret, iterate } from '../lsystems';
+import LSystem, { createVisitor } from '../lsystems/LSystem';
 
-const singleTree = {
+const singleTree = new LSystem({
   productions: {
     A: function Module(params) {
       const s = params[0];
@@ -10,9 +10,9 @@ const singleTree = {
     },
   },
   axiom: 'A(1)',
-};
+});
 
-const rowOfTrees = (() => {
+const rowOfTrees = new LSystem((() => {
   const rotC = 3;
   const rotP = 0.9;
   const rotQ = rotC - rotP;
@@ -28,46 +28,21 @@ const rowOfTrees = (() => {
     },
     axiom: '-(90)F(1)',
   };
-})();
+})());
 
 const renderSystem = (system, target, x, y, length) => {
-  const iterations = 5;
-  const stack = [];
+  const iterations = 4;
   const angle = 85;
   const turtle = new Tortuga(target, x, y, length);
-  let program = '';
+  const visitor = createVisitor(turtle, length, angle);
 
   for (let i = 0; i < iterations; i += 1) {
-    program = iterate(parse(program), system);
+    system.iterate();
   }
 
   turtle.size(2);
   turtle.color('#b756a4');
-  interpret(parse(program), {
-    PushState: function PushState() {
-      stack.push([turtle.position, turtle.direction]);
-      turtle.drawPath();
-    },
-    PopState: function PopState() {
-      const state = stack.pop();
-      turtle.drawPath();
-      turtle.penUp();
-      turtle.setXY(state[0][0], state[0][1]);
-      turtle.setHeading(state[1]);
-      turtle.penDown();
-    },
-    Module: function Module(node, params) {
-      // All modules are interpreted as Forward
-      turtle.forward(params.length > 0 ? length * params[0] : length);
-    },
-    Rotation: function Rotation(node, params) {
-      if (node.name === '+') {
-        turtle.left(params.length ? params[0] : angle);
-      } else {
-        turtle.right(params.length ? params[0] : angle);
-      }
-    },
-  });
+  system.walk(visitor);
   turtle.drawPath();
 };
 
