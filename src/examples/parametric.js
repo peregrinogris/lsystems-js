@@ -1,6 +1,22 @@
 import Tortuga from 'tortuga-js';
 import LSystem, { createVisitor } from '../lsystems';
 
+const renderSystem = (system, target, x, y, length) => {
+  const iterations = 4;
+  const angle = 85;
+  const turtle = new Tortuga(target, x, y, length);
+  const visitor = createVisitor(turtle, length, angle);
+
+  for (let i = 0; i < iterations; i += 1) {
+    system.iterate();
+  }
+
+  turtle.size(2);
+  turtle.color('#b756a4');
+  system.walk(visitor);
+  turtle.drawPath();
+};
+
 const singleTree = new LSystem({
   productions: {
     A: (params) => {
@@ -29,22 +45,6 @@ const rowOfTrees = new LSystem((() => {
     axiom: '-(90)F(1)',
   };
 })());
-
-const renderSystem = (system, target, x, y, length) => {
-  const iterations = 4;
-  const angle = 85;
-  const turtle = new Tortuga(target, x, y, length);
-  const visitor = createVisitor(turtle, length, angle);
-
-  for (let i = 0; i < iterations; i += 1) {
-    system.iterate();
-  }
-
-  turtle.size(2);
-  turtle.color('#b756a4');
-  system.walk(visitor);
-  turtle.drawPath();
-};
 
 const render = () => {
   renderSystem(rowOfTrees, '#tortuga-row-of-trees', -350, -150, 7);

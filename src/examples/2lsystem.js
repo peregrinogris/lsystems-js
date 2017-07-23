@@ -1,22 +1,6 @@
 import Tortuga from 'tortuga-js';
 import LSystem, { createVisitor } from '../lsystems';
 
-const acropetal = new LSystem({
-  productions: {
-    'B<A': () => 'B',
-  },
-  axiom: 'B[+A]A[-A]A[+A]A',
-  ignores: ['+', '-'],
-});
-
-const basipetal = new LSystem({
-  productions: {
-    'A>B': () => 'B',
-  },
-  axiom: 'A[+A]A[-A]A[+A]B',
-  ignores: ['+', '-'],
-});
-
 const renderSystem = (system, target, x, y, length) => {
   const iterations = 4;
   const angle = 60;
@@ -50,6 +34,22 @@ const renderSystem = (system, target, x, y, length) => {
     turtle.penDown();
   }
 };
+
+const acropetal = new LSystem({
+  productions: {
+    'B<A': () => 'B',
+  },
+  axiom: 'B[+A]A[-A]A[+A]A',
+  ignores: ['+', '-'],
+});
+
+const basipetal = new LSystem({
+  productions: {
+    'A>B': () => 'B',
+  },
+  axiom: 'A[+A]A[-A]A[+A]B',
+  ignores: ['+', '-'],
+});
 
 const render = () => {
   renderSystem(acropetal, '#tortuga-acropetal', -150, -80, 40);
