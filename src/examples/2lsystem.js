@@ -2,21 +2,17 @@ import Tortuga from 'tortuga-js';
 import LSystem, { createVisitor } from '../lsystems';
 
 const acropetal = new LSystem({
-  productions: [{
-    left: 'B',
-    predecessor: 'A',
-    successor: () => 'B',
-  }],
+  productions: {
+    'B<A': () => 'B',
+  },
   axiom: 'B[+A]A[-A]A[+A]A',
   ignores: ['+', '-'],
 });
 
 const basipetal = new LSystem({
-  productions: [{
-    predecessor: 'A',
-    right: 'B',
-    successor: () => 'B',
-  }],
+  productions: {
+    'A>B': () => 'B',
+  },
   axiom: 'A[+A]A[-A]A[+A]B',
   ignores: ['+', '-'],
 });

@@ -5,21 +5,32 @@ import { iterate as iterateContext, nestAST } from './context';
 // Helper
 const makeTree = input => nestAST(parse(input).body).tree;
 
+const hasContext = productions => (
+  Object.keys(productions).findIndex(
+    key => key.indexOf('<') > -1 || key.indexOf('>') > -1,
+  ) > -1
+);
+
 export default class LSystem {
   constructor(system = {}) {
     this.system = system;
     this.setProgram(system.axiom);
-    if (Array.isArray(this.system.productions)) {
-      this.contextSensitive = true;
-      const productions = this.system.productions.reduce((acc, cur) => {
-        if (!acc[cur.predecessor]) { acc[cur.predecessor] = []; }
-        acc[cur.predecessor].push({
-          al: cur.left,
-          ar: cur.right ? makeTree(cur.right) : null,
-          successor: cur.successor,
-        });
-        return acc;
-      }, {});
+    this.contextSensitive = hasContext(system.productions);
+    if (this.contextSensitive) {
+      const productions = {};
+      Object.keys(this.system.productions).forEach((key) => {
+        const [
+          , al, predecessor, ar,
+        ] = key.match(/([A-Z]+)?<?([A-Z])>?([A-Z[\]]+)?/);
+        const production = {
+          al,
+          predecessor,
+          ar: ar ? makeTree(ar) : '',
+          successor: this.system.productions[key],
+        };
+        if (!productions[predecessor]) { productions[predecessor] = []; }
+        productions[predecessor].push(production);
+      });
       this.system.productions = productions;
     }
   }
