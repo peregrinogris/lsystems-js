@@ -1,6 +1,5 @@
 import parse from './parser';
-import { interpret, iterate } from './interpreter';
-import { iterate as iterateContext, nestAST } from './context';
+import { iterate, iterateContext, nestAST } from './iterate';
 
 // Helper
 const makeTree = input => nestAST(parse(input).body).tree;
@@ -47,6 +46,25 @@ export default class LSystem {
     this.ast = parse(this.program);
   }
   walk(visitor) {
-    interpret(this.ast, visitor);
+    this.ast.body.forEach((node) => {
+      const method = visitor[node.type];
+      switch (node.type) {
+        case 'Module':
+        case 'Rotation':
+        case 'Modifier':
+          if (method) {
+            method(node, node.params.map(n => n.value));
+          }
+          break;
+        case 'PopState':
+        case 'PushState':
+          if (method) {
+            method(node);
+          }
+          break;
+        default:
+          throw new TypeError(node.type);
+      }
+    });
   }
 }

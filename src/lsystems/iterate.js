@@ -1,4 +1,3 @@
-
 const nestAST = (ast, ignoreList = []) => {
   const tree = Object.assign({}, ast[0], {
     idx: 0, parent: null, children: [],
@@ -60,7 +59,7 @@ const validSubtree = (subtree, tree) => {
   return false;
 };
 
-const iterate = (ast, lsystem) => {
+const iterateContext = (ast, lsystem) => {
   const { nodeList } = nestAST(ast.body, lsystem.ignores);
   if (!ast.body.length) {
     return lsystem.axiom;
@@ -103,9 +102,36 @@ const iterate = (ast, lsystem) => {
   }).join('');
 };
 
+const iterate = (ast, lsystem) => {
+  if (!ast.body.length) {
+    return lsystem.axiom;
+  }
+  return ast.body.map((node) => {
+    let method = null;
+    switch (node.type) {
+      case 'Module':
+      case 'Rotation':
+        method = lsystem.productions[node.name];
+        if (method) {
+          return method(node.params.map(n => n.value));
+        }
+      case 'Modifier': // eslint-disable-line no-fallthrough
+        if (node.params.length) {
+          return `${node.name}(${node.params.map(n => n.value).join(',')})`;
+        }
+        return node.name;
+      case 'PopState':
+      case 'PushState':
+      case 'NumberLiteral':
+        return node.value;
+      default:
+        throw new TypeError(node.type);
+    }
+  }).join('');
+};
+
 export {
-  nestAST,
   iterate,
-  validPath,
-  validSubtree,
+  iterateContext,
+  nestAST,
 };
