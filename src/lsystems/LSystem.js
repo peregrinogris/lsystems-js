@@ -20,7 +20,7 @@ export default class LSystem {
       Object.keys(this.system.productions).forEach((key) => {
         const [
           , al, predecessor, ar,
-        ] = key.match(/([A-Z]+)?<?([A-Z])>?([A-Z[\]]+)?/);
+        ] = key.match(/([A-Z]+)?<?([^<>])>?([A-Z[\]]+)?/);
         const production = {
           al,
           predecessor,

@@ -73,10 +73,11 @@ const iterateContext = (ast, lsystem) => {
           production = lsystem.productions[node.name].find((current) => {
             let applies = true;
             if (current.al) {
-              applies = validPath(current.al, nodeList[idx]);
+              applies = applies && validPath(current.al, nodeList[idx]);
             }
             if (current.ar) {
-              applies = nodeList[idx].children &&
+              applies = applies &&
+                        nodeList[idx].children &&
                         nodeList[idx].children.reduce((acc, cur) => (
                           acc || validSubtree(current.ar, cur)
                         ), false);
