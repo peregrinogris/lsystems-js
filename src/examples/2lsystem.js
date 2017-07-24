@@ -1,9 +1,8 @@
 import Tortuga from 'tortuga-js';
 import LSystem, { createVisitor } from '../lsystems';
 
-const renderSystem = (system, target, x, y, length) => {
-  const iterations = 4;
-  const angle = 60;
+const renderSystemProgression =
+(system, target, x, y, length, angle = 60, iterations = 4) => {
   const turtle = new Tortuga(target, x, y, length);
   const visitor = Object.assign(createVisitor(turtle, length, angle), {
     Module: (node, params) => {
@@ -35,6 +34,24 @@ const renderSystem = (system, target, x, y, length) => {
   }
 };
 
+const renderSystem = (system, target, x, y, length, angle, iterations) => {
+  const turtle = new Tortuga(target, x, y, length);
+  const visitor = Object.assign(createVisitor(turtle, length, angle), {
+    Module: (node, params) => {
+      if (node.name === 'F') {
+        turtle.forward(params.length > 0 ? length * params[0] : length);
+      }
+    },
+  });
+
+  for (let i = 0; i < iterations; i += 1) {
+    system.iterate();
+  }
+
+  system.walk(visitor);
+  turtle.drawPath();
+};
+
 const acropetal = new LSystem({
   productions: {
     'B<A': () => 'B',
@@ -51,13 +68,51 @@ const basipetal = new LSystem({
   ignores: ['+', '-'],
 });
 
+const plantLike = new LSystem({
+  productions: {
+    // A
+    // 'A<A>A': () => 'A',
+    // 'A<A>B': () => 'B[+FBFB]',
+    // 'A<B>A': () => 'B',
+    // 'A<B>B': () => 'B',
+    // 'B<A>A': () => 'A',
+    // 'B<A>B': () => 'BFB',
+    // 'B<B>A': () => 'A',
+    // 'B<B>B': () => 'A',
+
+    // B
+    'A<A>A': () => 'B',
+    'A<A>B': () => 'B[-FBFB]',
+    'A<B>A': () => 'B',
+    'A<B>B': () => 'B',
+    'B<A>A': () => 'A',
+    'B<A>B': () => 'BFB',
+    'B<B>A': () => 'B',
+    'B<B>B': () => 'A',
+
+    // E
+    // 'A<A>A': () => 'A',
+    // 'A<A>B': () => 'B[-FBFB]',
+    // 'A<B>A': () => 'B',
+    // 'A<B>B': () => 'B',
+    // 'B<A>A': () => 'A',
+    // 'B<A>B': () => 'BFB',
+    // 'B<B>A': () => 'B',
+    // 'B<B>B': () => 'A',
+
+    '+': () => '-',
+    '-': () => '+',
+  },
+  axiom: 'FBFBFB',
+  ignores: ['+', '-', 'F'],
+});
+
 const render = () => {
-  renderSystem(acropetal, '#tortuga-acropetal', -150, -80, 40);
-  renderSystem(basipetal, '#tortuga-basipetal', -150, -80, 40);
+  renderSystemProgression(acropetal, '#tortuga-acropetal', -150, -80, 40);
+  renderSystemProgression(basipetal, '#tortuga-basipetal', -150, -80, 40);
+  renderSystem(plantLike, '#tortuga-plant-like', 0, -230, 9, 22.5, 29);
 };
 
 export {
-  acropetal,
-  basipetal,
   render as default,
 };

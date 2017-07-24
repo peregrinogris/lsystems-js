@@ -77,10 +77,39 @@
 
     <h1>Context Sensitive L-Systems </h1>
     <h2>Acropetal Propagation</h2>
+    <pre>
+      #ignore +−
+      axiom : Fb[+Fa]Fa[−Fa]Fa[+Fa]Fa
+      rules : Fb < Fa → Fb
+    </pre>
     <canvas style="max-height: 1000px;" width="500" height="200" id="tortuga-acropetal"></canvas>
 
     <h2>Basipetal Propagation</h2>
+    <pre>
+      #ignore +−
+      axiom : Fa[+Fa]Fa[−Fa]Fa[+Fa]Fb
+      rules : Fa > Fb → Fb
+    </pre>
     <canvas style="max-height: 1000px;" width="500" height="200" id="tortuga-basipetal"></canvas>
+
+    <h2>Plant-like 0-1</h2>
+    <pre>
+      n=30
+      δ=22.5°
+      #ignore +-F
+      axiom : F1F1F1
+      rules : 0 < 0 > 0 → 1
+              0 < 0 > 1 → 1[-F1F1]
+              0 < 1 > 0 → 1
+              0 < 1 > 1 → 1
+              1 < 0 > 0 → 0
+              1 < 0 > 1 → 1F1
+              1 < 1 > 0 → 1
+              1 < 1 > 1 → 0
+              * < + > * → -
+              * < - > * → +
+    </pre>
+    <canvas style="max-height: 1000px;" width="500" height="500" id="tortuga-plant-like"></canvas>
 
     <script src="js/app.min.js"></script>
   </body>
