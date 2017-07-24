@@ -59,8 +59,28 @@ const validSubtree = (subtree, tree) => {
   return false;
 };
 
-const iterateContext = (ast, lsystem) => {
-  const { nodeList } = nestAST(ast.body, lsystem.ignores);
+const matchProduction = (lsystem, node, tree) => (
+  lsystem.productions[node.name].find((current) => {
+    let applies = true;
+    if (current.al) {
+      applies = applies && validPath(current.al, tree);
+    }
+    if (current.ar) {
+      applies = applies &&
+                tree.children &&
+                tree.children.reduce((acc, cur) => (
+                  acc || validSubtree(current.ar, cur)
+                ), false);
+    }
+    return applies;
+  })
+);
+
+const iterate = (ast, lsystem, contextSensitive = false) => {
+  let nodeList;
+  if (contextSensitive) {
+    nodeList = (nestAST(ast.body, lsystem.ignores)).nodeList;
+  }
   if (!ast.body.length) {
     return lsystem.axiom;
   }
@@ -70,22 +90,14 @@ const iterateContext = (ast, lsystem) => {
       case 'Module':
       case 'Rotation':
         if (lsystem.productions[node.name]) {
-          production = lsystem.productions[node.name].find((current) => {
-            let applies = true;
-            if (current.al) {
-              applies = applies && validPath(current.al, nodeList[idx]);
-            }
-            if (current.ar) {
-              applies = applies &&
-                        nodeList[idx].children &&
-                        nodeList[idx].children.reduce((acc, cur) => (
-                          acc || validSubtree(current.ar, cur)
-                        ), false);
-            }
-            return applies;
-          });
+          if (!contextSensitive) {
+            production = lsystem.productions[node.name];
+          } else {
+            production = matchProduction(lsystem, node, nodeList[idx]);
+            production = production ? production.successor : production;
+          }
           if (production) {
-            return production.successor(node.params.map(n => n.value));
+            return production(node.params.map(n => n.value));
           }
         }
       case 'Modifier': // eslint-disable-line no-fallthrough
@@ -103,36 +115,7 @@ const iterateContext = (ast, lsystem) => {
   }).join('');
 };
 
-const iterate = (ast, lsystem) => {
-  if (!ast.body.length) {
-    return lsystem.axiom;
-  }
-  return ast.body.map((node) => {
-    let method = null;
-    switch (node.type) {
-      case 'Module':
-      case 'Rotation':
-        method = lsystem.productions[node.name];
-        if (method) {
-          return method(node.params.map(n => n.value));
-        }
-      case 'Modifier': // eslint-disable-line no-fallthrough
-        if (node.params.length) {
-          return `${node.name}(${node.params.map(n => n.value).join(',')})`;
-        }
-        return node.name;
-      case 'PopState':
-      case 'PushState':
-      case 'NumberLiteral':
-        return node.value;
-      default:
-        throw new TypeError(node.type);
-    }
-  }).join('');
-};
-
 export {
   iterate,
-  iterateContext,
   nestAST,
 };

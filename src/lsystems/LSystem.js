@@ -1,5 +1,5 @@
 import parse from './parser';
-import { iterate, iterateContext, nestAST } from './iterate';
+import { iterate, nestAST } from './iterate';
 
 // Helper
 const makeTree = input => nestAST(parse(input).body).tree;
@@ -38,11 +38,7 @@ export default class LSystem {
     this.ast = parse(this.program);
   }
   iterate() {
-    if (this.contextSensitive) {
-      this.program = iterateContext(this.ast, this.system);
-    } else {
-      this.program = iterate(this.ast, this.system);
-    }
+    this.program = iterate(this.ast, this.system, this.contextSensitive);
     this.ast = parse(this.program);
   }
   walk(visitor) {
