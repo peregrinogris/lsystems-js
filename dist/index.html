@@ -61,33 +61,47 @@
     </pre>
     <canvas width="500" height="500" id="tortuga-quad-koch"></canvas>
 
+    <h2>Stochastic System</h2>
+    <pre>
+      variables : F
+      constants : +-[]
+      axiom     : F
+      rules     : F (0.33)→ F[+F]F[-F]F
+                  F (0.33)→ F[+F]F
+                  F (0.34)→ F[-F]F
+      angle     : 25°
+    </pre>
+    <canvas width="300" height="600" id="tortuga-stochastic"></canvas>
+
     <h1>Parametric L-Systems </h1>
     <h2>Row of Trees</h2>
     <pre>
       #define    c 3
       #define    p 0.9
-      #define    q c−p
+      #define    q c-p
       #define    h (p∗q)^0.5
       modules   : F(x)
       constants : +-()
       axiom     : -(90)F(1)
-      rules     : (F(x)→F(x∗p)+F(x∗h)−−F(x∗h)+F(x∗q))
+      rules     : (F(x)→F(x∗p)+F(x∗h)--F(x∗h)+F(x∗q))
     </pre>
     <canvas style="max-height: 1000px;" width="1000" height="500" id="tortuga-row-of-trees"></canvas>
 
     <h1>Context Sensitive L-Systems </h1>
     <h2>Acropetal Propagation</h2>
     <pre>
-      #ignore +−
-      axiom : Fb[+Fa]Fa[−Fa]Fa[+Fa]Fa
+      #ignore +-
+      constants : +-[]
+      axiom : Fb[+Fa]Fa[-Fa]Fa[+Fa]Fa
       rules : Fb < Fa → Fb
     </pre>
     <canvas style="max-height: 1000px;" width="500" height="200" id="tortuga-acropetal"></canvas>
 
     <h2>Basipetal Propagation</h2>
     <pre>
-      #ignore +−
-      axiom : Fa[+Fa]Fa[−Fa]Fa[+Fa]Fb
+      #ignore +-
+      constants : +-[]
+      axiom : Fa[+Fa]Fa[-Fa]Fa[+Fa]Fb
       rules : Fa > Fb → Fb
     </pre>
     <canvas style="max-height: 1000px;" width="500" height="200" id="tortuga-basipetal"></canvas>

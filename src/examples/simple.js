@@ -1,5 +1,8 @@
 import Tortuga from 'tortuga-js';
-import LSystem, { createVisitor } from '../lsystems';
+import LSystem, {
+  createVisitor,
+  stochasticProduction,
+} from '../lsystems';
 
 const renderSystem =
 (system, angle, iterations, target, x, y, length, rainbow) => {
@@ -59,10 +62,22 @@ const quadKoch = new LSystem({
   axiom: 'F-F-F-F',
 });
 
+const stochastic = new LSystem({
+  productions: {
+    F: stochasticProduction([
+      [33, () => 'F[+F]F[-F]F'],
+      [33, () => 'F[+F]F'],
+      [34, () => 'F[-F]F'],
+    ]),
+  },
+  axiom: 'F',
+});
+
 const render = () => {
   renderSystem(tree, 22.5, 3, '#tortuga-tree', -50, -200, 20, false);
   renderSystem(hexGosperCurve, 60, 3, '#tortuga-hex-gosper', 200, 0, 20, true);
   renderSystem(snowflake, 60, 3, '#tortuga-snowflake', 120, -200, 14, true);
   renderSystem(quadKoch, 90, 2, '#tortuga-quad-koch', -100, -100, 15, false);
+  renderSystem(stochastic, 25, 5, '#tortuga-stochastic', 0, -295, 8, false);
 };
 export default render;

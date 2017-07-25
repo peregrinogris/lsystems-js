@@ -1,6 +1,6 @@
 import LSystem from './LSystem';
 
-// Helper
+// Helpers
 const createVisitor = (turtle, length, angle) => {
   const stack = [];
   return {
@@ -30,8 +30,21 @@ const createVisitor = (turtle, length, angle) => {
   };
 };
 
+const stochasticProduction = distribution => (...args) => {
+  // TODO: Validate distribution input
+  const rnd = Math.floor(Math.random() * 100);
+  let acc = 0;
+  for (let i = 0; i < distribution.length; i += 1) {
+    if (acc <= rnd && rnd < acc + distribution[i][0]) {
+      return distribution[i][1](...args);
+    }
+    acc += distribution[i][0];
+  }
+  return '';
+};
 
 export {
   LSystem as default,
   createVisitor,
+  stochasticProduction,
 };
