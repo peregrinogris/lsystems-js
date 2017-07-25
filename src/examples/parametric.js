@@ -19,8 +19,7 @@ const renderSystem = (system, target, x, y, length) => {
 
 const singleTree = new LSystem({
   productions: {
-    A: (params) => {
-      const s = params[0];
+    A: (s) => {
       const sR = Math.round(100 * (s / 1.456)) / 100;
       return `F(${s})[+A(${sR})][-A(${sR})]`;
     },
@@ -35,10 +34,10 @@ const rowOfTrees = new LSystem((() => {
   const rotH = (rotP * rotQ) ** 0.5;
   return {
     productions: {
-      F: (params) => {
-        const xh = Math.round(100 * params[0] * rotH) / 100;
-        const xp = Math.round(100 * params[0] * rotP) / 100;
-        const xq = Math.round(100 * params[0] * rotQ) / 100;
+      F: (x) => {
+        const xh = Math.round(100 * x * rotH) / 100;
+        const xp = Math.round(100 * x * rotP) / 100;
+        const xq = Math.round(100 * x * rotQ) / 100;
         return `F(${xp})+F(${xh})--F(${xh})+F(${xq})`;
       },
     },

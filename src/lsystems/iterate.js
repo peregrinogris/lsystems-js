@@ -97,7 +97,7 @@ const iterate = (ast, lsystem, contextSensitive = false) => {
             production = production ? production.successor : production;
           }
           if (production) {
-            return production(node.params.map(n => n.value));
+            return production(...node.params.map(n => n.value));
           }
         }
       case 'Modifier': // eslint-disable-line no-fallthrough

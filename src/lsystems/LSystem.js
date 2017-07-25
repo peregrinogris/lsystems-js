@@ -16,6 +16,7 @@ export default class LSystem {
     this.setProgram(system.axiom);
     this.contextSensitive = hasContext(system.productions);
     if (this.contextSensitive) {
+      // Transform productions object
       const productions = {};
       Object.keys(this.system.productions).forEach((key) => {
         const [
@@ -49,7 +50,7 @@ export default class LSystem {
         case 'Rotation':
         case 'Modifier':
           if (method) {
-            method(node, node.params.map(n => n.value));
+            method(node, ...node.params.map(n => n.value));
           }
           break;
         case 'PopState':

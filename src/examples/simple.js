@@ -19,11 +19,11 @@ const renderSystem =
       0,
     );
     let currentEdge = 2;
-    visitor.Module = (node, params) => {
+    visitor.Module = (node, lengthModifier = 1) => {
       turtle.rainbow(currentEdge, edges);
       currentEdge += 1;
       // All modules are interpreted as Forward
-      turtle.forward(params.length > 0 ? length * params[0] : length);
+      turtle.forward(length * lengthModifier);
     };
   }
 

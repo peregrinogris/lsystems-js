@@ -5,14 +5,14 @@ const renderSystemProgression =
 (system, target, x, y, length, angle = 60, iterations = 4) => {
   const turtle = new Tortuga(target, x, y, length);
   const visitor = Object.assign(createVisitor(turtle, length, angle), {
-    Module: (node, params) => {
+    Module: (node, lengthModifier = 1) => {
       if (node.name === 'A') {
         turtle.color('green');
       } else {
         turtle.color('red');
       }
       // All modules are interpreted as Forward
-      turtle.forward(params.length > 0 ? length * params[0] : length);
+      turtle.forward(length * lengthModifier);
     },
   });
 
@@ -37,9 +37,9 @@ const renderSystemProgression =
 const renderSystem = (system, target, x, y, length, angle, iterations) => {
   const turtle = new Tortuga(target, x, y, length);
   const visitor = Object.assign(createVisitor(turtle, length, angle), {
-    Module: (node, params) => {
+    Module: (node, lengthModifier = 1) => {
       if (node.name === 'F') {
-        turtle.forward(params.length > 0 ? length * params[0] : length);
+        turtle.forward(length * lengthModifier);
       }
     },
   });

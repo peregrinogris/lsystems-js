@@ -1,7 +1,7 @@
 import LSystem from './LSystem';
 
 // Helpers
-const createVisitor = (turtle, length, angle) => {
+const createVisitor = (turtle, length, defaultAngle) => {
   const stack = [];
   return {
     PushState: () => {
@@ -16,15 +16,15 @@ const createVisitor = (turtle, length, angle) => {
       turtle.setHeading(state[1]);
       turtle.penDown();
     },
-    Module: (node, params) => {
+    Module: (node, lengthModifier = 1) => {
       // All modules are interpreted as Forward
-      turtle.forward(params.length > 0 ? length * params[0] : length);
+      turtle.forward(length * lengthModifier);
     },
-    Rotation: (node, params) => {
+    Rotation: (node, angle = defaultAngle) => {
       if (node.name === '+') {
-        turtle.left(params.length ? params[0] : angle);
+        turtle.left(angle);
       } else {
-        turtle.right(params.length ? params[0] : angle);
+        turtle.right(angle);
       }
     },
   };
