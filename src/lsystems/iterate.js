@@ -32,32 +32,6 @@ const nestAST = (ast, ignoreList = []) => {
   return { tree, nodeList };
 };
 
-const validPath = (path, node) => {
-  let valid = true;
-  let current = node;
-  for (let idx = path.length; idx > 0; idx -= 1) {
-    if (!current) {
-      valid = false;
-      break;
-    }
-    valid = valid && current.parent.name === path[idx - 1];
-    current = current.parent;
-  }
-  return valid;
-};
-
-const validSubtree = (subtree, tree) => {
-  // console.log(JSON.stringify(subtree, null, '  '));
-  // console.log(JSON.stringify(tree, null, '  '));
-  if (subtree && tree) {
-    return subtree.type === tree.type &&
-           subtree.name === tree.name &&
-           subtree.children.reduce((acc, cur, idx) => (
-             acc && validSubtree(cur, tree.children[idx])
-           ), true);
-  }
-  return false;
-};
 // Helper
 const getKey = ({ name, params }) => (
   `${name}${params.length > 0 ? `[${params.length}]` : ''}`
