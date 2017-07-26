@@ -87,14 +87,18 @@ const iterate = (ast, lsystem, contextSensitive = false) => {
   if (!ast.body.length) {
     return lsystem.axiom;
   }
+  // Local Helper
+  const getKey = ({ name, params }) => (
+    `${name}${params.length > 0 ? `[${params.length}]` : ''}`
+  );
   return ast.body.map((node, idx) => {
     let production = null;
     switch (node.type) {
       case 'Module':
       case 'Rotation':
-        if (lsystem.productions[node.name]) {
+        if (lsystem.productions[getKey(node)]) {
           if (!contextSensitive) {
-            production = lsystem.productions[node.name];
+            production = lsystem.productions[getKey(node)];
           } else {
             production = matchProduction(lsystem, node, nodeList[idx]);
           }
