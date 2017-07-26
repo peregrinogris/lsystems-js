@@ -1,8 +1,5 @@
 import parse from './parser';
-import { iterate, nestAST } from './iterate';
-
-// Helpers
-const makeTree = input => nestAST(parse(input).body).tree;
+import iterate from './iterate';
 
 const hasContext = productions => (
   Object.keys(productions).findIndex(
@@ -18,6 +15,10 @@ const hasParameters = productions => (
 
 // Transform F(x,y) -> F[2]
 const argsToCount = (key) => {
+  // Only transform if there are parameters
+  if (key.indexOf('(') === -1) {
+    return key;
+  }
   // Get the necessary production components
   const [
     , predecessor, args,
@@ -30,13 +31,18 @@ const argsToCount = (key) => {
 const transformContextProductions = (systemProductions) => {
   const productions = {};
   Object.keys(systemProductions).forEach((key) => {
-    const [
+    let [
       , al, predecessor, ar,
     ] = key.match(/(.+<)?([^<>]+)(>.+)?/);
 
+    // Fix module names
+    al = al ? argsToCount(al.slice(0, -1)) : '';
+    ar = ar ? argsToCount(ar.substr(1)) : '';
+    predecessor = argsToCount(predecessor);
+
     const production = {
-      al: al ? al.slice(0, -1) : '',
-      ar: ar ? makeTree(ar.substr(1)) : '',
+      al,
+      ar,
       successor: systemProductions[key],
     };
     if (!productions[predecessor]) { productions[predecessor] = []; }

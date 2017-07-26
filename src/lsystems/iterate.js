@@ -58,20 +58,22 @@ const validSubtree = (subtree, tree) => {
   }
   return false;
 };
+// Helper
+const getKey = ({ name, params }) => (
+  `${name}${params.length > 0 ? `[${params.length}]` : ''}`
+);
 
 const matchProduction = (lsystem, node, tree) => {
-  const production = lsystem.productions[node.name].find(
+  const production = lsystem.productions[getKey(node)].find(
     (current) => {
       let applies = true;
       if (current.al) {
-        applies = applies && validPath(current.al, tree);
+        applies = applies && tree.parent && current.al === getKey(tree.parent);
       }
       if (current.ar) {
         applies = applies &&
                   tree.children &&
-                  tree.children.reduce((acc, cur) => (
-                    acc || validSubtree(current.ar, cur)
-                  ), false);
+                  tree.children.some(cur => current.ar === getKey(cur));
       }
       return applies;
     },
@@ -87,10 +89,7 @@ const iterate = (ast, lsystem, contextSensitive = false) => {
   if (!ast.body.length) {
     return lsystem.axiom;
   }
-  // Local Helper
-  const getKey = ({ name, params }) => (
-    `${name}${params.length > 0 ? `[${params.length}]` : ''}`
-  );
+
   return ast.body.map((node, idx) => {
     let production = null;
     switch (node.type) {
@@ -120,8 +119,4 @@ const iterate = (ast, lsystem, contextSensitive = false) => {
     }
   }).join('');
 };
-
-export {
-  iterate,
-  nestAST,
-};
+export default iterate;
