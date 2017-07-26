@@ -59,22 +59,25 @@ const validSubtree = (subtree, tree) => {
   return false;
 };
 
-const matchProduction = (lsystem, node, tree) => (
-  lsystem.productions[node.name].find((current) => {
-    let applies = true;
-    if (current.al) {
-      applies = applies && validPath(current.al, tree);
-    }
-    if (current.ar) {
-      applies = applies &&
-                tree.children &&
-                tree.children.reduce((acc, cur) => (
-                  acc || validSubtree(current.ar, cur)
-                ), false);
-    }
-    return applies;
-  })
-);
+const matchProduction = (lsystem, node, tree) => {
+  const production = lsystem.productions[node.name].find(
+    (current) => {
+      let applies = true;
+      if (current.al) {
+        applies = applies && validPath(current.al, tree);
+      }
+      if (current.ar) {
+        applies = applies &&
+                  tree.children &&
+                  tree.children.reduce((acc, cur) => (
+                    acc || validSubtree(current.ar, cur)
+                  ), false);
+      }
+      return applies;
+    },
+  );
+  return production ? production.successor : null;
+};
 
 const iterate = (ast, lsystem, contextSensitive = false) => {
   let nodeList;
@@ -94,7 +97,6 @@ const iterate = (ast, lsystem, contextSensitive = false) => {
             production = lsystem.productions[node.name];
           } else {
             production = matchProduction(lsystem, node, nodeList[idx]);
-            production = production ? production.successor : production;
           }
           if (production) {
             return production(...node.params.map(n => n.value));

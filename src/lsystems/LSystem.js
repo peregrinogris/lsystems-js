@@ -10,6 +10,23 @@ const hasContext = productions => (
   ) > -1
 );
 
+const transformContextProductions = (systemProductions) => {
+  const productions = {};
+  Object.keys(systemProductions).forEach((key) => {
+    const [
+      , al, predecessor, ar,
+    ] = key.match(/([A-Z]+)?<?([^<>])>?([A-Z[\]]+)?/);
+    const production = {
+      al,
+      ar: ar ? makeTree(ar) : '',
+      successor: systemProductions[key],
+    };
+    if (!productions[predecessor]) { productions[predecessor] = []; }
+    productions[predecessor].push(production);
+  });
+  return productions;
+};
+
 export default class LSystem {
   constructor(system = {}) {
     this.system = system;
@@ -17,21 +34,9 @@ export default class LSystem {
     this.contextSensitive = hasContext(system.productions);
     if (this.contextSensitive) {
       // Transform productions object
-      const productions = {};
-      Object.keys(this.system.productions).forEach((key) => {
-        const [
-          , al, predecessor, ar,
-        ] = key.match(/([A-Z]+)?<?([^<>])>?([A-Z[\]]+)?/);
-        const production = {
-          al,
-          predecessor,
-          ar: ar ? makeTree(ar) : '',
-          successor: this.system.productions[key],
-        };
-        if (!productions[predecessor]) { productions[predecessor] = []; }
-        productions[predecessor].push(production);
-      });
-      this.system.productions = productions;
+      this.system.productions = transformContextProductions(
+        this.system.productions,
+      );
     }
   }
   setProgram(program) {
