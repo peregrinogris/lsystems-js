@@ -83,6 +83,7 @@
       constants : +-()
       axiom     : -(90)F(1)
       rules     : (F(x)→F(x∗p)+F(x∗h)--F(x∗h)+F(x∗q))
+      angle     : 85°
     </pre>
     <canvas style="max-height: 1000px;" width="1000" height="500" id="tortuga-row-of-trees"></canvas>
 
@@ -96,6 +97,7 @@
       axiom     : -(90)F(1,0)
       rules     : F(x,t):t=0 → F(x∗p,2)+F(x∗h,1)--F(x∗h,1)+F(x∗q,0)
                   F(x,t):t>0 → F(x,t-1)
+      angle     : 85°
     </pre>
     <canvas style="max-height: 1000px;" width="1000" height="500" id="tortuga-row-of-trees-2"></canvas>
 
@@ -106,6 +108,7 @@
       constants : +-[]
       axiom : Fb[+Fa]Fa[-Fa]Fa[+Fa]Fa
       rules : Fb < Fa → Fb
+      angle : 60°
     </pre>
     <canvas style="max-height: 1000px;" width="500" height="200" id="tortuga-acropetal"></canvas>
 
@@ -115,13 +118,12 @@
       constants : +-[]
       axiom : Fa[+Fa]Fa[-Fa]Fa[+Fa]Fb
       rules : Fa > Fb → Fb
+      angle : 60°
     </pre>
     <canvas style="max-height: 1000px;" width="500" height="200" id="tortuga-basipetal"></canvas>
 
     <h2>Plant-like 0-1</h2>
     <pre>
-      n=30
-      δ=22.5°
       #ignore +-F
       axiom : F1F1F1
       rules : 0 < 0 > 0 → 1
@@ -134,6 +136,7 @@
               1 < 1 > 1 → 0
               * < + > * → -
               * < - > * → +
+      angle : 22.5°
     </pre>
     <canvas style="max-height: 1000px;" width="500" height="500" id="tortuga-plant-like"></canvas>
 
