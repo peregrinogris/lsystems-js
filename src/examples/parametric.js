@@ -49,17 +49,24 @@ const rowOfTrees2 = new LSystem((() => {
   const rotP = 0.3;
   const rotQ = rotC - rotP;
   const rotH = (rotP * rotQ) ** 0.5;
+  // Use Explicit Conditions for the rules, this is optional
   return {
     productions: {
-      'F(x,t)': (x, t) => {
-        if (t === 0) {
-          const xh = Math.round(100 * x * rotH) / 100;
-          const xp = Math.round(100 * x * rotP) / 100;
-          const xq = Math.round(100 * x * rotQ) / 100;
-          return `F(${xp},2)+F(${xh},1)--F(${xh},1)+F(${xq},0)`;
-        }
-        return `F(${x},${t - 1})`;
-      },
+      'F(x,t)': [
+        {
+          condition: (x, t) => t === 0,
+          production: (x) => {
+            const xh = Math.round(100 * x * rotH) / 100;
+            const xp = Math.round(100 * x * rotP) / 100;
+            const xq = Math.round(100 * x * rotQ) / 100;
+            return `F(${xp},2)+F(${xh},1)--F(${xh},1)+F(${xq},0)`;
+          },
+        },
+        {
+          condition: (x, t) => t > 0,
+          production: (x, t) => `F(${x},${t - 1})`,
+        },
+      ],
     },
     axiom: '-(90)F(1,0)',
   };
