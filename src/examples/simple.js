@@ -13,6 +13,10 @@ const renderSystem =
   const turtle = new Tortuga(target, x, y, length);
   const visitor = createVisitor(turtle, length, angle);
 
+  turtle.color(234, 234, 234);
+  turtle.background(47, 60, 79);
+  turtle.size(2);
+
   if (rainbow) {
     const edges = system.ast.body.reduce(
       (acc, cur) => (cur.type === 'Module' ? acc + 1 : acc),
@@ -74,10 +78,10 @@ const stochastic = new LSystem({
 });
 
 const render = () => {
-  renderSystem(tree, 22.5, 3, '#tortuga-tree', -50, -200, 20, false);
+  renderSystem(tree, 22.5, 3, '#tortuga-tree', 0, -200, 20, false);
   renderSystem(hexGosperCurve, 60, 3, '#tortuga-hex-gosper', 200, 0, 20, true);
-  renderSystem(snowflake, 60, 3, '#tortuga-snowflake', 120, -200, 14, true);
-  renderSystem(quadKoch, 90, 2, '#tortuga-quad-koch', -100, -100, 15, false);
-  renderSystem(stochastic, 25, 5, '#tortuga-stochastic', 0, -295, 8, false);
+  renderSystem(snowflake, 60, 3, '#tortuga-snowflake', 110, -200, 14, true);
+  renderSystem(quadKoch, 90, 2, '#tortuga-quad-koch', -120, -120, 15, false);
+  renderSystem(stochastic, 32, 5, '#tortuga-stochastic', 0, -295, 8, true);
 };
 export default render;

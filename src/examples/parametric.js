@@ -10,7 +10,8 @@ const renderSystem = (system, target, x, y, length, iterations) => {
   }
 
   turtle.size(2);
-  turtle.color('#b756a4');
+  turtle.color(234, 234, 234);
+  turtle.background(47, 60, 79);
   system.walk(visitor);
   turtle.drawPath();
 };
